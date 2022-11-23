@@ -1,4 +1,5 @@
 import express from "express";
+import { isUser } from "../middlewares/authentication-middleware.js";
 
 const router = express.Router();
 
@@ -9,11 +10,11 @@ const cart = [
   },
 ];
 
-router.get("/", (request, response) => {
+router.get("/", isUser, (request, response) => {
   response.json(cart);
 });
 
-router.post("/", (request, response) => {
+router.post("/", isUser, (request, response) => {
   const newCartItem = {
     ...request.body,
     quantity: 1,

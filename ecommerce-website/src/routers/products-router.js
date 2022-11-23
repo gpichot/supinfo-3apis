@@ -1,4 +1,5 @@
 import express from "express";
+import { isAdmin } from "../middlewares/authentication-middleware.js";
 
 const router = express.Router();
 
@@ -34,7 +35,7 @@ router.get("/:id", (request, response) => {
   response.json(product);
 });
 
-router.post("/", (request, response) => {
+router.post("/", isAdmin, (request, response) => {
   const newProduct = {
     ...request.body,
     id: Math.floor(Math.random() * 1000 * 1000 * 100),
@@ -45,7 +46,7 @@ router.post("/", (request, response) => {
   response.status(201).json(newProduct);
 });
 
-router.put("/:id", (request, response) => {
+router.put("/:id", isAdmin, (request, response) => {
   const id = parseInt(request.params.id);
 
   const product = products.find((item) => item.id === id);
@@ -62,7 +63,7 @@ router.put("/:id", (request, response) => {
   response.status(200).json(product);
 });
 
-router.delete("/:id", (request, response) => {
+router.delete("/:id", isAdmin, (request, response) => {
   const id = parseInt(request.params.id);
 
   const product = products.find((item) => item.id === id);
