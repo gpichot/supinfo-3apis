@@ -1,4 +1,5 @@
 import supertest from "supertest";
+import jest from "jest";
 
 import { Product } from "../mongo.js";
 import app from "../server";
@@ -30,5 +31,30 @@ describe("Products Router GET /", () => {
         price: 1,
       })
     );
+  });
+});
+
+describe("Products Router POST /", () => {
+  beforeAll(async () => {
+    await Product.deleteMany({});
+  });
+
+  it("should add the product", async () => {
+    const response = await supertest(app)
+      .post("/products")
+      .set("Authorization", "admin")
+      .send({
+        name: "Test Product",
+      })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        name: "Test Product",
+      })
+    );
+
+    const ob = await Product.findById(response.body._id);
+    expect(ob).toBeTruthy();
   });
 });
