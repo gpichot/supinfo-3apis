@@ -1,9 +1,14 @@
 import mongoose from "mongoose";
 
-mongoose.connect(process.env.MONGODB_URI, {
-  dbName: "supinfo-gabrielp",
-});
+const MONGODB_URI = process.env.MONGODB_URI;
+const DBNAME =
+  process.env.NODE_ENV === "test"
+    ? "supinfo-gabrielp-test"
+    : "supinfo-gabrielp";
 
+mongoose.connect(MONGODB_URI, {
+  dbName: DBNAME,
+});
 mongoose.connection.on("error", (e) => {
   console.log("Error", e.toString());
 });
