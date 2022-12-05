@@ -1,4 +1,3 @@
-import "dotenv/config";
 import express from "express";
 
 import hitsCountMiddleware from "./middlewares/hits-count-middleware.js";
