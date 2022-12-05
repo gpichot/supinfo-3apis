@@ -17,6 +17,4 @@ app.use("/products", productsRouter);
 app.use("/articles", productsRouter);
 app.use("/cart", cartRouter);
 
-app.listen(3000, () => {
-  console.log(`Server is listening on http://localhost:3000`);
-});
+export default app;

@@ -1,11 +1,7 @@
-import productsRouter from "./products-router";
 import supertest from "supertest";
-import express from "express";
+
 import { Product } from "../mongo.js";
-
-const app = express();
-
-app.use("/", productsRouter);
+import app from "../server";
 
 describe("Products Router GET /", () => {
   beforeAll(async () => {
@@ -23,7 +19,7 @@ describe("Products Router GET /", () => {
   });
 
   it("should return the list of products", async () => {
-    const response = await supertest(app).get("/").expect(200);
+    const response = await supertest(app).get("/products").expect(200);
 
     expect(response.body).toHaveLength(2);
     expect(response.body[0]).toEqual(
