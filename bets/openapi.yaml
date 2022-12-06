@@ -1,0 +1,298 @@
+openapi: 3.0.0
+info:
+  version: 1.0.2
+  title: Bets API
+tags:
+  - name: matches
+    description: Matches
+  - name: bets
+    description: Bets
+  - name: users
+    description: Users
+paths:
+  /users:
+    post:
+      tags:
+        - users
+      summary: create a new user
+      description: ""
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+        description: Created user object
+        required: true
+      responses:
+        default:
+          description: successful operation
+  /users/profile:
+    get:
+      tags:
+        - users
+      summary: retrieve current user account
+      operationId: getAccount
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: User not connected
+    put:
+      tags:
+        - users
+      summary: update current user account
+      description: ""
+      operationId: updateAccount
+      requestBody:
+        $ref: "#/components/requestBodies/UserAccount"
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "403":
+          description: User not connected
+        "405":
+          description: Validation exception
+  /matches/:
+    get:
+      tags:
+        - matches
+      summary: list matches
+      description: ""
+      operationId: listMatches
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Match"
+    post:
+      tags:
+        - matches
+      summary: create match
+      description: ""
+      operationId: createMatch
+      requestBody:
+        $ref: "#/components/requestBodies/MatchCreate"
+      responses:
+        "400":
+          description: Invalid data
+        "403":
+          description: Fordidden
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Match"
+  /matches/{matchId}:
+    patch:
+      tags:
+        - matches
+      summary: updateMatch
+      description: ""
+      operationId: updateMatch
+      parameters:
+        - name: matchId
+          schema:
+            type: string
+          required: true
+          in: path
+      requestBody:
+        $ref: "#/components/requestBodies/MatchUpdate"
+      responses:
+        "400":
+          description: Invalid data
+        "403":
+          description: Fordidden
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Match"
+    delete:
+      tags:
+        - matches
+      summary: delete match
+      description: ""
+      operationId: deleteMatch
+      parameters:
+        - name: matchId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "400":
+          description: Invalid data
+        "403":
+          description: Fordidden
+        "204":
+          description: No content
+  /bets:
+    get:
+      tags:
+        - bets
+      summary: list bets by all user
+      description: ""
+      operationId: listBets
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Bet"
+    post:
+      tags:
+        - bets
+      summary: bet amount on match
+      description: ""
+      operationId: createBet
+      requestBody:
+        $ref: "#/components/requestBodies/BetCreate"
+      responses:
+        "400":
+          description: Invalid data
+        "403":
+          description: Fordidden
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bet"
+
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: https://petstore.swagger.io/v2
+components:
+  requestBodies:
+    UserAccount:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              amount:
+                type: number
+      required: true
+    MatchCreate:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              teamA:
+                type: string
+              teamB:
+                type: string
+              status:
+                type: string
+                enum: [pending, start, finished]
+              startAt:
+                type: string
+              finishAt:
+                type: string
+      description: Match create paylaod
+      required: true
+    MatchUpdate:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              winner:
+                type: string
+              scoreTeamA:
+                type: string
+              scoreTeamB:
+                type: string
+              status:
+                type: string
+                enum: [pending, start, finished]
+      description: Match update payload
+      required: true
+    BetCreate:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              winnerSelected:
+                type: string
+              betAmount:
+                type: number
+              matchId:
+                type: string
+      description: Bet create payload
+      required: true
+  schemas:
+    Match:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        teamA:
+          type: string
+        teamB:
+          type: string
+        status:
+          type: string
+          enum: [pending, start, finished]
+        startAt:
+          type: string
+        finishAt:
+          type: string
+        scoreTeamA:
+          type: number
+        scoreTeamB:
+          type: number
+        winner:
+          type: string
+      xml:
+        name: Order
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        role:
+          type: string
+          enum: [admin, user]
+        amount:
+          type: number
+      xml:
+        name: User
+    Bet:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        userId:
+          type: string
+        matchId:
+          type: string
+        winnerSelected:
+          type: string
+        betAmount:
+          type: number
+      xml:
+        name: Bet
